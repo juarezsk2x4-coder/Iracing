@@ -279,6 +279,124 @@ footer {
 .corner-metric-label { font-size: 12px; color: var(--text-2); }
 .corner-metric-val { font-family: var(--mono); font-size: 13px; font-weight: 700; }
 .cv-bar { height: 4px; border-radius: 2px; margin-top: 6px; }
+/* ── MY CONFIG TAB ── */
+.ergo-box {
+  background: var(--bg-card-2); border: 1px solid var(--border-hi);
+  border-left: 3px solid var(--yellow); border-radius: 10px;
+  padding: 16px 20px; margin-bottom: 24px;
+}
+.ergo-box h3 { font-size: 13px; font-weight: 700; color: var(--yellow); margin-bottom: 8px; }
+.ergo-textarea {
+  width: 100%; background: var(--bg); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--text); font-family: var(--font);
+  font-size: 13px; padding: 10px 14px; resize: vertical; min-height: 80px;
+  outline: none; transition: border-color .15s;
+}
+.ergo-textarea:focus { border-color: var(--yellow); }
+.ergo-flags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.ergo-flag {
+  font-size: 11px; padding: 3px 10px; border-radius: 999px;
+  border: 1px solid var(--yellow); color: var(--yellow);
+  background: rgba(255,209,102,.08);
+}
+.cfg-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; }
+.cfg-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 18px; position: relative;
+}
+.cfg-card.affected { border-color: var(--yellow); }
+.cfg-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; gap: 10px; }
+.cfg-name { font-weight: 700; font-size: 14px; }
+.cfg-path { font-family: var(--mono); font-size: 10px; color: var(--text-3); display: block; margin-top: 2px; }
+.cfg-badges { display: flex; gap: 4px; flex-wrap: wrap; flex-shrink: 0; }
+.cfg-badge {
+  font-size: 10px; padding: 2px 8px; border-radius: 999px;
+  background: rgba(255,209,102,.12); color: var(--yellow); border: 1px solid rgba(255,209,102,.3);
+}
+.slider-wrap { margin: 10px 0 6px; }
+.slider-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-3); margin-bottom: 4px; }
+.slider-rec-label { font-size: 11px; color: var(--green); }
+.cfg-slider {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 6px; border-radius: 3px;
+  background: var(--border-hi); outline: none; cursor: pointer;
+  transition: background .15s;
+}
+.cfg-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--yellow); border: 2px solid var(--bg);
+  cursor: pointer; box-shadow: 0 0 6px rgba(255,209,102,.4);
+  transition: transform .1s;
+}
+.cfg-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+.cfg-slider::-moz-range-thumb {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--yellow); border: 2px solid var(--bg); cursor: pointer;
+}
+.cfg-value-display {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 12px; margin-bottom: 10px;
+}
+.cfg-current-val {
+  font-family: var(--mono); font-weight: 800; font-size: 18px; color: var(--yellow);
+}
+.cfg-rec-val { font-size: 12px; color: var(--text-2); }
+.cfg-rec-arrow { color: var(--green); font-size: 12px; }
+.cfg-note {
+  width: 100%; background: var(--bg-card-2); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--text); font-family: var(--font);
+  font-size: 12px; padding: 8px 12px; resize: none; outline: none;
+  min-height: 56px; transition: border-color .15s; margin-top: 2px;
+}
+.cfg-note:focus { border-color: var(--blue); }
+.cfg-note::placeholder { color: var(--text-3); }
+.cfg-impact {
+  margin-top: 10px; padding: 8px 12px;
+  background: var(--bg-card-2); border-radius: 6px;
+  font-size: 11px; color: var(--text-2);
+  border-left: 2px solid var(--text-3);
+  transition: border-color .2s;
+}
+.cfg-impact.positive { border-color: var(--green); color: var(--green); }
+.cfg-impact.negative { border-color: var(--red); color: var(--red); }
+.cfg-impact.neutral  { border-color: var(--text-3); }
+.cfg-toolbar {
+  display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.cfg-btn {
+  padding: 8px 18px; border-radius: 8px; border: 1px solid var(--border);
+  font-size: 13px; font-weight: 600; cursor: pointer; transition: all .15s;
+}
+.cfg-btn-save {
+  background: rgba(255,209,102,.15); color: var(--yellow); border-color: var(--yellow);
+}
+.cfg-btn-save:hover { background: rgba(255,209,102,.25); }
+.cfg-btn-reset {
+  background: transparent; color: var(--text-2);
+}
+.cfg-btn-reset:hover { color: var(--text); background: var(--bg-card-2); }
+.cfg-btn-export {
+  background: rgba(72,149,239,.15); color: var(--blue); border-color: var(--blue);
+}
+.cfg-btn-export:hover { background: rgba(72,149,239,.25); }
+.cfg-saved-toast {
+  font-size: 12px; color: var(--green); opacity: 0;
+  transition: opacity .3s;
+}
+.cfg-delta-summary {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 16px 20px; margin-bottom: 20px;
+}
+.cfg-delta-title { font-size: 13px; font-weight: 700; margin-bottom: 12px; color: var(--text-2); }
+.delta-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+.delta-row:last-child { border: none; }
+.delta-from { color: var(--text-3); font-family: var(--mono); }
+.delta-arrow { color: var(--text-3); margin: 0 8px; }
+.delta-to { font-family: var(--mono); font-weight: 700; }
+.delta-to.changed { color: var(--yellow); }
+.delta-to.same    { color: var(--text-3); }
 /* ── SCROLLBAR ── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
@@ -313,6 +431,7 @@ footer {
     <a href="#flow">Flow</a>
     <a href="#settings">Settings</a>
     <a href="#practice">Practice</a>
+    <a href="#myconfig" style="color:var(--yellow);font-weight:700">⚙ My Config</a>
   </div>
 </nav>
 
@@ -620,6 +739,40 @@ footer {
 </div>
 </section>
 
+<!-- MY CONFIG -->
+<section id="myconfig">
+<div class="container">
+  <div class="section-header">
+    <div class="section-title"><span class="num" style="background:var(--yellow);color:#000">⚙</span> My Config</div>
+    <div class="section-desc">Adjust recommended settings to your actual values, add notes, and see the predicted impact. All data is saved in your browser — nothing is sent anywhere.</div>
+  </div>
+
+  <!-- Ergonomics notes -->
+  <div class="ergo-box">
+    <h3>🪑 Physical Setup Notes</h3>
+    <textarea class="ergo-textarea" id="ergoNotes" placeholder="Describe your physical setup — seat distance from pedals, rig height, steering column angle, pedal angle, etc. E.g. 'sitting ~5cm too far from pedals, difficulty reaching full brake travel'"></textarea>
+    <div class="ergo-flags" id="ergoFlags"></div>
+  </div>
+
+  <!-- toolbar -->
+  <div class="cfg-toolbar">
+    <button class="cfg-btn cfg-btn-save" id="cfgSave">💾 Save to browser</button>
+    <button class="cfg-btn cfg-btn-reset" id="cfgReset">↺ Reset to recommended</button>
+    <button class="cfg-btn cfg-btn-export" id="cfgExport">⬇ Export JSON</button>
+    <span class="cfg-saved-toast" id="savedToast">✓ Saved</span>
+  </div>
+
+  <!-- change summary -->
+  <div class="cfg-delta-summary" id="deltaSummary">
+    <div class="cfg-delta-title">Your settings vs. recommended</div>
+    <div id="deltaRows"></div>
+  </div>
+
+  <!-- setting sliders -->
+  <div class="cfg-grid" id="cfgGrid"></div>
+</div>
+</section>
+
 <footer>
   <div class="container">
     iRacing Telemetry Analyzer · {{ meta.car }} at {{ meta.track }} · {{ meta.total_valid_laps }} laps analyzed
@@ -917,6 +1070,353 @@ mermaid.initialize({
 if (window.innerWidth < 700) {
   document.querySelector('.diag-charts').style.gridTemplateColumns = '1fr';
 }
+
+// ── MY CONFIG TAB ───────────────────────────────────────────────────────────
+(function() {
+  const WEAKNESSES = DATA.weaknesses.map(w => w.key);
+
+  // Setting definitions: what can be slid, what it affects, and how the value maps
+  const DEFS = [
+    {
+      key: 'ffb_strength',
+      name: 'FFB Strength',
+      path: 'Black Box (F9) > Force Feedback > Strength',
+      unit: '%', min: 0, max: 100, step: 1,
+      recommended: 'Auto (per car)',
+      recommended_num: 75,
+      affects: ['steering_jitter'],
+      help: 'Use Auto in-game — sets max without clipping. Only override if you want a specific feel.',
+      impact: v => v > 90 ? { msg: 'Very high — risk of FFB clipping. Check black box bar is not flashing.', cls: 'negative' }
+                 : v < 40 ? { msg: 'Very low — you may be losing road feel detail.', cls: 'negative' }
+                 : { msg: 'Within normal range for DD wheels.', cls: 'neutral' },
+    },
+    {
+      key: 'ffb_damping',
+      name: 'FFB Damping',
+      path: 'Options > Drive > Force Feedback > Damping',
+      unit: '%', min: 0, max: 20, step: 1,
+      recommended: '5–10%',
+      recommended_num: 7,
+      affects: ['steering_jitter'],
+      help: 'Suppresses high-frequency oscillations from the DD motor. Start at 5%, add 1% at a time.',
+      impact: v => {
+        const jitter = DATA.weaknesses.find(w => w.key === 'steering_jitter');
+        if (!jitter) return { msg: 'No steering jitter detected — keep low.', cls: 'neutral' };
+        if (v >= 5 && v <= 10) return { msg: `Good range. Predicted jitter reduction: ~${(jitter.lap_time_cost_s * 0.4).toFixed(3)}s/lap improvement.`, cls: 'positive' };
+        if (v > 10) return { msg: 'Above 10% — wheel may feel sluggish. Test carefully.', cls: 'negative' };
+        return { msg: 'Below 5% — jitter may persist. Try increasing by 1% per session.', cls: 'neutral' };
+      },
+    },
+    {
+      key: 'ffb_smoothing',
+      name: 'FFB Smoothing',
+      path: 'Options > Drive > Force Feedback > Smoothing',
+      unit: '', min: 0, max: 8, step: 1,
+      recommended: '0',
+      recommended_num: 0,
+      affects: ['steering_jitter'],
+      help: 'Keep at 0 for direct-drive wheels. Smoothing destroys road texture the DD motor delivers.',
+      impact: v => v === 0 ? { msg: 'Correct for DD hardware.', cls: 'positive' }
+                 : v <= 2 ? { msg: 'Minor smoothing — may help jitter but costs feel detail.', cls: 'neutral' }
+                 : { msg: `Smoothing at ${v} — this is degrading DD fidelity significantly.`, cls: 'negative' },
+    },
+    {
+      key: 'ffb_min_force',
+      name: 'Min Force',
+      path: 'Options > Drive > Force Feedback > Min Force',
+      unit: '%', min: 0, max: 10, step: 1,
+      recommended: '0%',
+      recommended_num: 0,
+      affects: [],
+      help: 'DD wheels have no deadzone. Min Force only helps belt/gear drives overcome friction.',
+      impact: v => v === 0 ? { msg: 'Correct — no artificial force floor needed.', cls: 'positive' }
+                 : { msg: `At ${v}% — adds artificial force floor. Likely not beneficial on Simagic hardware.`, cls: 'neutral' },
+    },
+    {
+      key: 'brake_force_factor',
+      name: 'Brake Force Factor',
+      path: 'Options > Drive > Pedals > Brake Force Factor',
+      unit: '', min: 0.5, max: 3.0, step: 0.1,
+      recommended: '1.0 (linear)',
+      recommended_num: 1.0,
+      affects: ['brake_cv', 'brake_rate'],
+      help: 'Hydraulic pedals report real pressure — keep linear at 1.0. Changing this hides what the pedal is actually doing.',
+      impact: v => {
+        const cv = DATA.weaknesses.find(w => w.key === 'brake_cv');
+        if (Math.abs(v - 1.0) < 0.05) return { msg: 'Linear — best for hydraulic pedals. Brake CV improvement is technique-only.', cls: 'positive' };
+        if (v < 1.0) return { msg: 'Below 1.0 — initial brake response is softened. May reduce brake rate further.', cls: 'negative' };
+        return { msg: `At ${v.toFixed(1)} — curve is aggressive. Could help initial bite but masks true pedal input.`, cls: 'neutral' };
+      },
+    },
+    {
+      key: 'steering_lock',
+      name: 'Steering Lock (car)',
+      path: 'Options > Drive > Steering Wheel > Auto or manual degrees',
+      unit: '°', min: 180, max: 1080, step: 30,
+      recommended: 'Auto (~480° for Porsche)',
+      recommended_num: 480,
+      affects: ['steering_jitter', 'mid_corner_speed'],
+      help: 'Must match the car\'s physical lock. Wrong ratio causes over/under-correction. Use Auto.',
+      impact: v => {
+        if (v >= 450 && v <= 540) return { msg: 'Within Porsche GT3 range. Good.', cls: 'positive' };
+        if (v < 300) return { msg: 'Too low — steering is oversensitive. Corrections become large inputs.', cls: 'negative' };
+        return { msg: 'Above 540° for a GT3 — steering feels numb, responses delayed.', cls: 'negative' };
+      },
+    },
+    {
+      key: 'look_ahead',
+      name: 'Look Ahead',
+      path: 'Options > Graphics > Driving View > Look Ahead',
+      unit: 's', min: 0, max: 3.0, step: 0.25,
+      recommended: '1.5–2.0s',
+      recommended_num: 1.75,
+      affects: ['mid_corner_speed', 'throttle_blips'],
+      help: 'Camera anticipates ahead of the car. Higher = earlier visual cues for corner exit. Helps mid-corner speed.',
+      impact: v => {
+        const cs = DATA.weaknesses.find(w => w.key === 'mid_corner_speed');
+        if (v >= 1.5 && v <= 2.0) return { msg: 'Optimal range. Eyes on exit early — helps mid-corner speed and reduces throttle hesitation.', cls: 'positive' };
+        if (v < 1.0) return { msg: 'Low — driving reactive to apex, not exit. Contributes to throttle hesitation.', cls: 'negative' };
+        return { msg: 'Above 2.0s — can feel disconnected. Test in small increments.', cls: 'neutral' };
+      },
+    },
+    {
+      key: 'brake_calibration',
+      name: 'Brake Max Pressure Point',
+      path: 'Options > Drive > Pedals > Brake Calibration (max travel)',
+      unit: '%', min: 30, max: 100, step: 5,
+      recommended: 'Set to comfortable peak (~70–85%)',
+      recommended_num: 75,
+      affects: ['brake_cv', 'brake_rate'],
+      help: 'The physical pedal position that maps to 100% in-game. If you sit far from pedals, lower this so 100% brake is reachable without stretching.',
+      impact: v => {
+        if (v >= 65 && v <= 85) return { msg: 'Good range — 100% brake is achievable without over-reaching. Helps consistency.', cls: 'positive' };
+        if (v > 90) return { msg: 'Very high — if you sit far from pedals, you cannot reach 100% brake comfortably. This degrades CV.', cls: 'negative' };
+        if (v < 50) return { msg: 'Low — pedal is very sensitive. Small movements = large brake inputs. Reduces fine control.', cls: 'negative' };
+        return { msg: 'Adjust based on comfortable peak pressure from your seating position.', cls: 'neutral' };
+      },
+    },
+  ];
+
+  const LS_KEY = 'iracing_myconfig_v1';
+
+  function loadSaved() {
+    try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; } catch { return {}; }
+  }
+  function save(data) {
+    localStorage.setItem(LS_KEY, JSON.stringify(data));
+  }
+
+  let state = loadSaved();
+
+  // ── ERGONOMICS ────────────────────────────────────────────────────────────
+  const ergoEl = document.getElementById('ergoNotes');
+  ergoEl.value = state.ergoNotes || '';
+
+  const ERGO_KEYWORDS = [
+    { words: ['far from pedal', 'reach', 'distance', 'stretching'], flag: '⚠ Seat distance affects brake reach → raises brake CV and throttle blips' },
+    { words: ['angle', 'tilt', 'heel'], flag: '⚠ Pedal angle changes pressure feel → check brake calibration max point' },
+    { words: ['height', 'too high', 'too low'], flag: '⚠ Seat height affects heel placement → modifies lever arm and pedal feel' },
+    { words: ['wrist', 'arm', 'reach wheel', 'close'], flag: '⚠ Steering reach affects smoothness → may increase jitter' },
+  ];
+
+  function updateErgoFlags() {
+    const text = ergoEl.value.toLowerCase();
+    const flags = ERGO_KEYWORDS.filter(k => k.words.some(w => text.includes(w)));
+    const container = document.getElementById('ergoFlags');
+    container.innerHTML = flags.map(f => `<span class="ergo-flag">${f.flag}</span>`).join('');
+  }
+
+  ergoEl.addEventListener('input', () => {
+    state.ergoNotes = ergoEl.value;
+    updateErgoFlags();
+  });
+  updateErgoFlags();
+
+  // ── BUILD SLIDER CARDS ───────────────────────────────────────────────────
+  const grid = document.getElementById('cfgGrid');
+
+  function formatVal(def, v) {
+    if (def.unit === '%') return Math.round(v) + '%';
+    if (def.unit === '°') return Math.round(v / def.step) * def.step + '°';
+    if (def.unit === 's') return v.toFixed(2) + 's';
+    return v % 1 === 0 ? v.toString() : v.toFixed(1);
+  }
+
+  function buildCard(def) {
+    const saved = state[def.key] || {};
+    const curVal = saved.value !== undefined ? saved.value : def.recommended_num;
+    const curNote = saved.note || '';
+
+    // Check if any of the affected weaknesses exist in the data
+    const affected = def.affects.filter(k => WEAKNESSES.includes(k));
+    const impact = def.impact(curVal);
+
+    const card = document.createElement('div');
+    card.className = 'cfg-card' + (affected.length ? ' affected' : '');
+    card.innerHTML = `
+      <div class="cfg-header">
+        <div>
+          <div class="cfg-name">${def.name}</div>
+          <span class="cfg-path">${def.path}</span>
+        </div>
+        <div class="cfg-badges">
+          ${affected.map(a => `<span class="cfg-badge">${a.replace('_', ' ')}</span>`).join('')}
+        </div>
+      </div>
+
+      <div class="cfg-value-display">
+        <div>
+          <div class="cfg-current-val" id="val_${def.key}">${formatVal(def, curVal)}</div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:2px">your setting</div>
+        </div>
+        <div style="text-align:right">
+          <div class="cfg-rec-val">Recommended</div>
+          <div style="font-size:13px;font-weight:700;color:var(--green)">${def.recommended}</div>
+        </div>
+      </div>
+
+      <div class="slider-wrap">
+        <div class="slider-labels">
+          <span>${formatVal(def, def.min)}</span>
+          <span style="color:var(--green)">▲ ${def.recommended}</span>
+          <span>${formatVal(def, def.max)}</span>
+        </div>
+        <input class="cfg-slider" type="range"
+          id="sl_${def.key}"
+          min="${def.min}" max="${def.max}" step="${def.step}"
+          value="${curVal}"
+          data-defkey="${def.key}">
+      </div>
+
+      <div class="cfg-impact ${impact.cls}" id="impact_${def.key}">
+        ${impact.msg}
+      </div>
+
+      <div style="margin-top:12px">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--text-3);margin-bottom:4px">Notes</div>
+        <textarea class="cfg-note" id="note_${def.key}"
+          placeholder="${def.help}">${curNote}</textarea>
+      </div>
+    `;
+
+    // Wire slider
+    const slider = card.querySelector(`#sl_${def.key}`);
+    const valDisplay = card.querySelector(`#val_${def.key}`);
+    const impactEl = card.querySelector(`#impact_${def.key}`);
+
+    // Gradient fill on slider
+    function updateSliderFill(el, v) {
+      const pct = ((v - def.min) / (def.max - def.min)) * 100;
+      el.style.background = `linear-gradient(to right, var(--yellow) 0%, var(--yellow) ${pct}%, var(--border-hi) ${pct}%, var(--border-hi) 100%)`;
+    }
+    updateSliderFill(slider, curVal);
+
+    slider.addEventListener('input', () => {
+      const v = parseFloat(slider.value);
+      valDisplay.textContent = formatVal(def, v);
+      updateSliderFill(slider, v);
+      const imp = def.impact(v);
+      impactEl.textContent = imp.msg;
+      impactEl.className = `cfg-impact ${imp.cls}`;
+      if (!state[def.key]) state[def.key] = {};
+      state[def.key].value = v;
+      updateDeltaSummary();
+    });
+
+    // Wire notes
+    const noteEl = card.querySelector(`#note_${def.key}`);
+    noteEl.addEventListener('input', () => {
+      if (!state[def.key]) state[def.key] = {};
+      state[def.key].note = noteEl.value;
+    });
+
+    return card;
+  }
+
+  DEFS.forEach(def => grid.appendChild(buildCard(def)));
+
+  // ── DELTA SUMMARY ────────────────────────────────────────────────────────
+  function updateDeltaSummary() {
+    const rows = document.getElementById('deltaRows');
+    rows.innerHTML = DEFS.map(def => {
+      const saved = state[def.key] || {};
+      const v = saved.value !== undefined ? saved.value : def.recommended_num;
+      const changed = Math.abs(v - def.recommended_num) > def.step * 0.5;
+      return `
+        <div class="delta-row">
+          <span>${def.name}</span>
+          <div style="display:flex;align-items:center">
+            <span class="delta-from">${def.recommended}</span>
+            <span class="delta-arrow">→</span>
+            <span class="delta-to ${changed ? 'changed' : 'same'}">${formatVal(def, v)}</span>
+          </div>
+        </div>`;
+    }).join('');
+  }
+  updateDeltaSummary();
+
+  // ── SAVE / RESET / EXPORT ────────────────────────────────────────────────
+  document.getElementById('cfgSave').addEventListener('click', () => {
+    state.ergoNotes = ergoEl.value;
+    save(state);
+    const toast = document.getElementById('savedToast');
+    toast.style.opacity = '1';
+    setTimeout(() => { toast.style.opacity = '0'; }, 1800);
+  });
+
+  document.getElementById('cfgReset').addEventListener('click', () => {
+    if (!confirm('Reset all settings to recommended values?')) return;
+    DEFS.forEach(def => {
+      const slider = document.getElementById(`sl_${def.key}`);
+      const valDisplay = document.getElementById(`val_${def.key}`);
+      const impactEl = document.getElementById(`impact_${def.key}`);
+      if (slider) {
+        slider.value = def.recommended_num;
+        valDisplay.textContent = formatVal(def, def.recommended_num);
+        const pct = ((def.recommended_num - def.min) / (def.max - def.min)) * 100;
+        slider.style.background = `linear-gradient(to right, var(--yellow) 0%, var(--yellow) ${pct}%, var(--border-hi) ${pct}%, var(--border-hi) 100%)`;
+        const imp = def.impact(def.recommended_num);
+        impactEl.textContent = imp.msg;
+        impactEl.className = `cfg-impact ${imp.cls}`;
+        delete state[def.key];
+      }
+    });
+    updateDeltaSummary();
+    save(state);
+  });
+
+  document.getElementById('cfgExport').addEventListener('click', () => {
+    const payload = {
+      driver: DATA.meta.driver,
+      car: DATA.meta.car,
+      track: DATA.meta.track,
+      exported_at: new Date().toISOString(),
+      ergonomics_notes: ergoEl.value,
+      settings: DEFS.map(def => {
+        const saved = state[def.key] || {};
+        const v = saved.value !== undefined ? saved.value : def.recommended_num;
+        return {
+          name: def.name,
+          ui_path: def.path,
+          recommended: def.recommended,
+          my_value: formatVal(def, v),
+          my_value_raw: v,
+          notes: saved.note || '',
+          changed_from_recommended: Math.abs(v - def.recommended_num) > def.step * 0.5,
+        };
+      }),
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = `iracing-myconfig-${DATA.meta.car.replace(/\s+/g,'_')}.json`;
+    a.click();
+  });
+
+  // Auto-save on page hide
+  window.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') save(state);
+  });
+})();
 </script>
 </body>
 </html>
