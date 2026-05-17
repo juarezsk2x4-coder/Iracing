@@ -1,0 +1,132 @@
+# Hardware reference database. Brazil pricing estimates include
+# ICMS + II + PIS/COFINS + freight at roughly 1.8-2.2x USD MSRP.
+# Source: Receita Federal tariff code NCM 9504.50 (game/sim hardware).
+# Verify current rates at https://www4.receita.fazenda.gov.br/ before purchase.
+
+wheelbases:
+  - name: "Simagic Alpha Mini"
+    brand: "Simagic"
+    torque_nm: 10.0
+    degrees_rotation: 1080
+    connectivity: "USB"
+    price_usd: 599
+    price_brl_estimate: 4500
+    import_duty_note: "Simagic is sold in Brazil via Pro Sim Brasil and other resellers; local price already includes duties."
+    availability_brazil: "local_reseller"
+    strengths:
+      - "Strong torque-per-dollar in Simagic ecosystem"
+      - "Same software/firmware as Alpha Ultimate — settings transfer cleanly"
+    weaknesses:
+      - "Single-shaft design; lower fidelity than Alpha U for high-FFB cars (GT3+)"
+    recommended_for: []
+
+  - name: "Simagic Alpha Ultimate"
+    brand: "Simagic"
+    torque_nm: 23.0
+    degrees_rotation: 1080
+    connectivity: "USB"
+    price_usd: 1499
+    price_brl_estimate: 11500
+    import_duty_note: "Local availability in Brazil via official resellers."
+    availability_brazil: "local_reseller"
+    strengths:
+      - "23 Nm peak; class-leading fidelity in 2025 market"
+      - "Co-axial motor design reduces cogging"
+    weaknesses:
+      - "Diminishing returns above 15 Nm for most GT/road cars in iRacing"
+    recommended_for: []
+
+  - name: "Moza R9 V2"
+    brand: "Moza"
+    torque_nm: 9.0
+    degrees_rotation: 2520
+    connectivity: "USB"
+    price_usd: 549
+    price_brl_estimate: 4800
+    import_duty_note: "Direct import only as of 2025; subject to full duty."
+    availability_brazil: "direct_import_only"
+    strengths:
+      - "Sufficient torque for road/GT cars"
+    weaknesses:
+      - "Software ecosystem less mature than Simagic/Fanatec"
+    recommended_for: []
+
+  - name: "Fanatec ClubSport DD+"
+    brand: "Fanatec"
+    torque_nm: 15.0
+    degrees_rotation: 1080
+    connectivity: "USB"
+    price_usd: 1099
+    price_brl_estimate: 9500
+    import_duty_note: "Fanatec has no direct Brazil distribution; full import duty applies."
+    availability_brazil: "direct_import_only"
+    strengths:
+      - "Quick-release wheel ecosystem"
+    weaknesses:
+      - "Long-running QA / shipping concerns in 2024-2025"
+    recommended_for: []
+
+pedals:
+  - name: "Simagic P2000 Hydraulic"
+    brand: "Simagic"
+    type: "hydraulic"
+    max_pressure_kg: 200
+    resolution_bits: 16
+    price_usd: 899
+    price_brl_estimate: 7800
+    import_duty_note: "Available in Brazil via Simagic resellers; check Pro Sim Brasil."
+    availability_brazil: "local_reseller"
+    strengths:
+      - "Real fluid pressure sensor; eliminates load-cell drift entirely"
+      - "Pressure-based input matches real braking system physics"
+    weaknesses:
+      - "Requires careful initial calibration"
+    recommended_for: []
+
+  - name: "Simagic P-CR3"
+    brand: "Simagic"
+    type: "load_cell"
+    max_pressure_kg: 130
+    resolution_bits: 16
+    price_usd: 599
+    price_brl_estimate: 5300
+    import_duty_note: "Local availability via Brazilian Simagic resellers."
+    availability_brazil: "local_reseller"
+    strengths:
+      - "High-quality load cell at lower price than P2000"
+    weaknesses:
+      - "Step down in feel and durability vs P2000 hydraulic"
+    recommended_for:
+      - "brake_cv"
+
+  - name: "Heusinkveld Sprints"
+    brand: "Heusinkveld"
+    type: "load_cell"
+    max_pressure_kg: 136
+    resolution_bits: 14
+    price_usd: 479
+    price_brl_estimate: 5500
+    import_duty_note: "Direct import from Netherlands; no Brazilian reseller as of 2025."
+    availability_brazil: "direct_import_only"
+    strengths:
+      - "Excellent build and consistency"
+    weaknesses:
+      - "Lower max pressure than P2000"
+    recommended_for:
+      - "brake_cv"
+
+  - name: "Thrustmaster T-LCM"
+    brand: "Thrustmaster"
+    type: "load_cell"
+    max_pressure_kg: 110
+    resolution_bits: 12
+    price_usd: 199
+    price_brl_estimate: 2200
+    import_duty_note: "Thrustmaster has Brazilian distribution; available at Kabum/Pichau."
+    availability_brazil: "local_reseller"
+    strengths:
+      - "Entry-level load-cell in Brazilian market"
+    weaknesses:
+      - "Lower resolution and build than Simagic/Heusinkveld"
+    recommended_for:
+      - "brake_cv"
