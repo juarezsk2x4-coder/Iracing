@@ -8,6 +8,7 @@ from typing import Any
 
 from .hardware_db import recommend_hardware
 from .ibt_parser import load_session
+from .json_export import export_json
 from .loop import post_analysis_loop
 from .metrics.registry import compute_metrics
 from .ranking import rank_weaknesses
@@ -121,13 +122,13 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def run_analysis(hardware: HardwareInfo, driver: DriverContext, ibt_path: str):
-    """Run the full pipeline. Returns (report_md, metrics, weaknesses)."""
+    """Run the full pipeline. Returns (report_md, metrics, weaknesses, hw_recs, settings, drills)."""
     print(f"\n→ Loading {ibt_path} ...")
     session = load_session(ibt_path, print_inventory=True)
     print(f"→ Computing metrics across {session.total_samples} samples at {session.sample_rate_hz:.0f} Hz ...")
     metrics = compute_metrics(session)
     if not metrics.lap_metrics:
-        return "# Analysis Failed\n\nNo valid laps detected in this file.", metrics, []
+        return "# Analysis Failed\n\nNo valid laps detected in this file.", metrics, [], [], [], []
     print(f"→ Detected {len(metrics.laps)} valid laps; reference lap = {metrics.reference_lap.lap_number}")
     weaknesses = rank_weaknesses(metrics)
     classify_weaknesses(weaknesses, hardware)
@@ -137,7 +138,7 @@ def run_analysis(hardware: HardwareInfo, driver: DriverContext, ibt_path: str):
     settings = generate_settings(weaknesses, hardware, driver.car)
     drills = generate_drills(weaknesses, max_drills=3)
     report = render_report(metrics, weaknesses, hardware, hw_recs, settings, drills, driver)
-    return report, metrics, weaknesses
+    return report, metrics, weaknesses, hw_recs, settings, drills
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -170,7 +171,7 @@ def main(argv: list[str] | None = None) -> int:
         else:
             hardware, driver, ibt_path = conversational_prompt(args)
 
-        report, metrics, weaknesses = run_analysis(hardware, driver, ibt_path)
+        report, metrics, weaknesses, hw_recs, settings, drills = run_analysis(hardware, driver, ibt_path)
     except (FileNotFoundError, ValueError, RuntimeError) as e:
         print(f"\nERROR: {e}", file=sys.stderr)
         return 1
@@ -179,6 +180,9 @@ def main(argv: list[str] | None = None) -> int:
         out_path = pathlib.Path(args.output).expanduser()
         out_path.write_text(report)
         print(f"\n✓ Report written to {out_path}")
+        json_path = out_path.with_suffix(".json")
+        export_json(metrics, weaknesses, hardware, hw_recs, settings, drills, driver, json_path)
+        print(f"✓ Data exported to  {json_path}")
     else:
         print("\n" + "=" * 50)
         print(report)

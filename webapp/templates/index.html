@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ data.meta.driver }} · iRacing Telemetry · {{ data.meta.track }}</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+:root {
+  --bg: #0b0c10;
+  --bg-card: #12141a;
+  --bg-card-2: #181b23;
+  --border: #23262f;
+  --border-hi: #2e3244;
+  --red: #e63946;
+  --red-dim: #9b2632;
+  --blue: #4895ef;
+  --green: #2dc653;
+  --orange: #f4a261;
+  --yellow: #ffd166;
+  --purple: #a855f7;
+  --text: #dde1ed;
+  --text-2: #8a93aa;
+  --text-3: #4a5268;
+  --font: 'Inter', system-ui, -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  --nav-h: 56px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(11,12,16,.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  height: var(--nav-h);
+  display: flex; align-items: center;
+  padding: 0 24px; gap: 0;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 700; font-size: 15px; letter-spacing: .02em;
+  color: var(--text); text-decoration: none; margin-right: auto;
+}
+.nav-logo span { color: var(--red); }
+.nav-links { display: flex; gap: 2px; }
+.nav-links a {
+  padding: 6px 14px; border-radius: 6px;
+  color: var(--text-2); text-decoration: none;
+  font-size: 13px; font-weight: 500;
+  transition: all .15s;
+}
+.nav-links a:hover { color: var(--text); background: var(--bg-card-2); }
+/* ── HERO ── */
+.hero {
+  padding: 40px 24px 32px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, #0e101680 0%, transparent 100%);
+  max-width: 1280px; margin: 0 auto;
+}
+.hero-top { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
+.hero-title { font-size: 28px; font-weight: 800; line-height: 1.2; }
+.hero-title .accent { color: var(--red); }
+.hero-sub { color: var(--text-2); font-size: 14px; margin-top: 6px; }
+.hero-meta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 999px; padding: 4px 12px;
+  font-size: 12px; color: var(--text-2);
+}
+.chip .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.best-time {
+  background: linear-gradient(135deg, #1a1f2e, #1c2035);
+  border: 1px solid #2e3550;
+  border-radius: 12px; padding: 16px 24px; text-align: right;
+}
+.best-time-label { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-3); }
+.best-time-value { font-size: 36px; font-weight: 800; font-family: var(--mono); color: var(--yellow); line-height: 1; margin-top: 2px; }
+.best-time-lap { font-size: 12px; color: var(--text-2); margin-top: 4px; }
+/* ── LAYOUT ── */
+.container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+section { padding: 40px 0; border-bottom: 1px solid var(--border); }
+.section-header { margin-bottom: 24px; }
+.section-title {
+  font-size: 18px; font-weight: 700;
+  display: flex; align-items: center; gap: 10px;
+}
+.section-title .num {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--red); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 800; flex-shrink: 0;
+}
+.section-desc { color: var(--text-2); font-size: 13px; margin-top: 6px; }
+/* ── CARDS ── */
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px;
+  transition: border-color .2s, transform .15s;
+}
+.card:hover { border-color: var(--border-hi); transform: translateY(-1px); }
+.card-label { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-3); margin-bottom: 8px; }
+.card-value { font-size: 26px; font-weight: 800; font-family: var(--mono); line-height: 1; }
+.card-sub { font-size: 12px; color: var(--text-2); margin-top: 6px; }
+/* ── SUMMARY WEAKNESS CARDS ── */
+.weakness-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; }
+.wcard {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 12px; overflow: hidden;
+}
+.wcard-top {
+  padding: 16px 20px;
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+}
+.wcard-name { font-weight: 600; font-size: 14px; flex: 1; }
+.wcard-cost {
+  font-family: var(--mono); font-size: 20px; font-weight: 800;
+  color: var(--red); white-space: nowrap;
+}
+.wcard-bottom {
+  padding: 10px 20px 14px;
+  border-top: 1px solid var(--border);
+  display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+}
+.tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 600;
+}
+.tag-technique { background: rgba(244,162,97,.15); color: var(--orange); }
+.tag-settings  { background: rgba(72,149,239,.15); color: var(--blue); }
+.tag-hardware  { background: rgba(230,57,70,.15);  color: var(--red); }
+.tag-ambiguous { background: rgba(168,85,247,.15); color: var(--purple); }
+.wcard-just { font-size: 11px; color: var(--text-2); margin-top: 2px; }
+/* ── CHART CONTAINERS ── */
+.chart-wrap {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px; position: relative;
+}
+.chart-title { font-size: 13px; font-weight: 600; color: var(--text-2); margin-bottom: 14px; }
+canvas { max-height: 340px; }
+/* ── TELEMETRY ── */
+.telem-controls { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; align-items: center; }
+.telem-group { display: flex; flex-wrap: wrap; gap: 6px; }
+.telem-label { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-3); align-self: center; margin-right: 4px; }
+.lap-btn, .ch-btn {
+  padding: 5px 12px; border-radius: 999px; border: 1px solid var(--border);
+  background: var(--bg-card-2); color: var(--text-2);
+  font-size: 12px; font-weight: 500; cursor: pointer;
+  transition: all .15s; white-space: nowrap;
+}
+.lap-btn.active { background: #1d2847; border-color: var(--blue); color: var(--blue); }
+.lap-btn.ref    { border-color: var(--yellow); }
+.lap-btn.ref.active { background: #2b2510; color: var(--yellow); }
+.ch-btn.active  { border-color: currentColor; }
+.ch-btn.speed   { color: var(--blue); }
+.ch-btn.brake   { color: var(--red); }
+.ch-btn.throttle { color: var(--green); }
+.ch-btn.steering { color: var(--purple); }
+.ch-btn.speed.active   { background: rgba(72,149,239,.12); }
+.ch-btn.brake.active   { background: rgba(230,57,70,.12); }
+.ch-btn.throttle.active { background: rgba(45,198,83,.12); }
+.ch-btn.steering.active { background: rgba(168,85,247,.12); }
+.telem-canvas-wrap { position: relative; height: 340px; }
+/* ── DIAGNOSTIC TABLE ── */
+.diag-table { width: 100%; border-collapse: collapse; }
+.diag-table th {
+  padding: 10px 14px; text-align: left;
+  font-size: 11px; text-transform: uppercase; letter-spacing: .08em;
+  color: var(--text-3); border-bottom: 1px solid var(--border);
+  font-weight: 600;
+}
+.diag-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.diag-table tr:last-child td { border-bottom: none; }
+.diag-table tr:hover td { background: var(--bg-card-2); }
+.cost-bar-wrap { display: flex; align-items: center; gap: 8px; }
+.cost-bar-bg { flex: 1; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.cost-bar { height: 100%; border-radius: 3px; transition: width .5s ease; }
+.cost-num { font-family: var(--mono); font-size: 13px; font-weight: 700; white-space: nowrap; }
+.math-code { font-family: var(--mono); font-size: 11px; color: var(--text-3); }
+/* ── SETTINGS GRID ── */
+.settings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+.setting-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 18px;
+}
+.setting-name { font-weight: 700; font-size: 14px; margin-bottom: 6px; }
+.setting-path {
+  font-family: var(--mono); font-size: 11px;
+  background: var(--bg-card-2); border: 1px solid var(--border);
+  border-radius: 6px; padding: 4px 10px;
+  color: var(--text-2); margin-bottom: 8px; display: block;
+}
+.setting-value {
+  font-size: 13px; font-weight: 600; color: var(--yellow);
+  margin-bottom: 6px;
+}
+.setting-rationale { font-size: 12px; color: var(--text-2); margin-bottom: 6px; }
+.setting-source { font-size: 11px; color: var(--text-3); }
+/* ── DRILLS ── */
+.drills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+.drill-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 12px; overflow: hidden;
+}
+.drill-num {
+  width: 100%; padding: 10px 18px;
+  font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em;
+  display: flex; align-items: center; gap: 8px;
+}
+.drill-num.d1 { background: rgba(230,57,70,.12); color: var(--red); }
+.drill-num.d2 { background: rgba(244,162,97,.12); color: var(--orange); }
+.drill-num.d3 { background: rgba(72,149,239,.12);  color: var(--blue); }
+.drill-body { padding: 16px 18px; }
+.drill-title { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+.drill-desc { font-size: 13px; color: var(--text-2); line-height: 1.7; margin-bottom: 12px; }
+.drill-criterion {
+  background: var(--bg-card-2); border: 1px solid var(--border-hi);
+  border-left: 3px solid var(--green); border-radius: 6px;
+  padding: 10px 14px; font-size: 12px; color: var(--text);
+  margin-bottom: 8px;
+}
+.drill-format { font-size: 11px; color: var(--text-3); }
+/* ── MERMAID ── */
+.mermaid-wrap {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 24px; overflow-x: auto;
+}
+.mermaid svg { max-width: 100%; }
+/* ── HW VERDICT ── */
+.hw-verdict {
+  background: linear-gradient(135deg, #0e1a12, #101e14);
+  border: 1px solid #1e3a26; border-radius: 12px;
+  padding: 20px 24px; display: flex; align-items: flex-start; gap: 16px;
+}
+.hw-verdict.bad {
+  background: linear-gradient(135deg, #1a0e0e, #1e1010);
+  border-color: #3a1e1e;
+}
+.hw-icon { font-size: 28px; flex-shrink: 0; line-height: 1; margin-top: 2px; }
+.hw-title { font-weight: 700; font-size: 15px; color: var(--green); margin-bottom: 4px; }
+.hw-verdict.bad .hw-title { color: var(--red); }
+.hw-body { font-size: 13px; color: var(--text-2); line-height: 1.7; }
+/* ── STATS ROW ── */
+.stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+.stat {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 16px;
+}
+.stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--text-3); margin-bottom: 4px; }
+.stat-val { font-size: 22px; font-weight: 800; font-family: var(--mono); }
+.stat-sub { font-size: 11px; color: var(--text-2); margin-top: 2px; }
+/* ── FOOTER ── */
+footer {
+  padding: 32px 24px; text-align: center;
+  font-size: 12px; color: var(--text-3);
+  border-top: 1px solid var(--border);
+}
+/* ── CORNER TABLE ── */
+.corner-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+.corner-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px;
+}
+.corner-id { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-3); margin-bottom: 8px; }
+.corner-metric { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.corner-metric-label { font-size: 12px; color: var(--text-2); }
+.corner-metric-val { font-family: var(--mono); font-size: 13px; font-weight: 700; }
+.cv-bar { height: 4px; border-radius: 2px; margin-top: 6px; }
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border-hi); border-radius: 3px; }
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+  .hero-title { font-size: 22px; }
+  .best-time-value { font-size: 28px; }
+  nav { padding: 0 16px; }
+  .container { padding: 0 16px; }
+  .nav-links a { padding: 6px 10px; font-size: 12px; }
+}
+</style>
+</head>
+<body>
+
+{% set d = data %}
+{% set meta = d.meta %}
+{% set ref_lap = d.laps | selectattr('is_reference') | list | first %}
+{% set ref_time = meta.ref_lap_time_s %}
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">
+    <span>▶</span> iRacing<span>Telemetry</span>
+  </a>
+  <div class="nav-links">
+    <a href="#summary">Summary</a>
+    <a href="#laps">Laps</a>
+    <a href="#telemetry">Telemetry</a>
+    <a href="#diagnostic">Diagnostic</a>
+    <a href="#flow">Flow</a>
+    <a href="#settings">Settings</a>
+    <a href="#practice">Practice</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-top">
+    <div>
+      <div class="hero-title">{{ meta.driver }} · <span class="accent">{{ meta.car }}</span></div>
+      <div class="hero-sub">{{ meta.track }} · {{ meta.total_valid_laps }} valid laps · {{ meta.sample_rate_hz | int }} Hz telemetry</div>
+      <div class="hero-meta">
+        <span class="chip"><span class="dot" style="background:var(--red)"></span>{{ meta.wheel }} ({{ meta.wheel_torque_nm | int }} Nm)</span>
+        <span class="chip"><span class="dot" style="background:var(--orange)"></span>{{ meta.pedals }} ({{ meta.pedals_type }})</span>
+        <span class="chip"><span class="dot" style="background:var(--blue)"></span>{{ meta.irating }} iRating</span>
+        {% if meta.has_rig %}<span class="chip"><span class="dot" style="background:var(--green)"></span>Rig mounted</span>{% endif %}
+      </div>
+    </div>
+    <div class="best-time">
+      <div class="best-time-label">Best Lap</div>
+      <div class="best-time-value">
+        {% if ref_time %}
+          {% set mins = (ref_time // 60) | int %}
+          {% set secs = ref_time - mins * 60 %}
+          {{ "%d:%06.3f" | format(mins, secs) }}
+        {% else %}n/a{% endif %}
+      </div>
+      <div class="best-time-lap">Lap {{ meta.ref_lap_number }}</div>
+    </div>
+  </div>
+</div>
+
+<!-- SUMMARY -->
+<section id="summary">
+<div class="container">
+  <div class="section-header">
+    <div class="section-title"><span class="num">1</span> Summary</div>
+    <div class="section-desc">Top weaknesses ranked by estimated lap-time cost. All heuristic costs are labeled — use for priority ordering, not absolute targets.</div>
+  </div>
+
+  <!-- stats row -->
+  <div class="stats-row" style="margin-bottom:20px">
+    <div class="stat">
+      <div class="stat-label">Valid Laps</div>
+      <div class="stat-val" style="color:var(--blue)">{{ meta.total_valid_laps }}</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Best Lap</div>
+      <div class="stat-val" style="color:var(--yellow)">
+        {% if ref_time %}{{ "%.3f" | format(ref_time) }}s{% else %}—{% endif %}
+      </div>
+      <div class="stat-sub">Lap {{ meta.ref_lap_number }}</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Top Weakness</div>
+      <div class="stat-val" style="color:var(--red)">{{ "%.3f" | format(d.weaknesses[0].lap_time_cost_s) }}s</div>
+      <div class="stat-sub">per lap (heuristic)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Total Est. Cost</div>
+      {% set total = namespace(v=0) %}
+      {% for w in d.weaknesses %}{% set total.v = total.v + w.lap_time_cost_s %}{% endfor %}
+      <div class="stat-val" style="color:var(--orange)">{{ "%.3f" | format(total.v) }}s</div>
+      <div class="stat-sub">across all weaknesses</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Hardware</div>
+      <div class="stat-val" style="color:var(--green); font-size:14px; padding-top:4px">Not a bottleneck</div>
+    </div>
+  </div>
+
+  <!-- weakness cards -->
+  <div class="weakness-cards">
+    {% for w in d.weaknesses %}
+    {% set tag_cls = 'tag-' + w.root_cause.split('-')[0] %}
+    <div class="wcard">
+      <div class="wcard-top">
+        <div>
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);margin-bottom:4px">#{{ loop.index }}</div>
+          <div class="wcard-name">{{ w.name }}</div>
+        </div>
+        <div class="wcard-cost">{{ "%.3f" | format(w.lap_time_cost_s) }}s</div>
+      </div>
+      <div class="wcard-bottom">
+        <span class="tag {{ tag_cls }}">{{ w.root_cause }}</span>
+        {% if w.inference_flag %}
+        <span class="tag" style="background:rgba(168,85,247,.12);color:var(--purple)">inferred</span>
+        {% endif %}
+        <div class="wcard-just" style="width:100%;margin-top:6px">{{ w.root_cause_justification[:120] }}{% if w.root_cause_justification|length > 120 %}…{% endif %}</div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+</section>
+
+<!-- LAP TIMES -->
+<section id="laps">
+<div class="container">
+  <div class="section-header">
+    <div class="section-title"><span class="num">2</span> Lap Performance</div>
+    <div class="section-desc">Reference lap (lap {{ meta.ref_lap_number }}) highlighted in gold. All times in seconds.</div>
+  </div>
+  <div class="chart-wrap">
+    <canvas id="lapTimesChart"></canvas>
+  </div>
+</div>
+</section>
+
+<!-- TELEMETRY TRACES -->
+<section id="telemetry">
+<div class="container">
+  <div class="section-header">
+    <div class="section-title"><span class="num">3</span> Telemetry Traces</div>
+    <div class="section-desc">Speed (km/h), Brake, Throttle (0–100%) and Steering Angle vs. track distance. Select laps and channels to compare.</div>
+  </div>
+  <div class="telem-controls">
+    <span class="telem-label">Laps</span>
+    <div class="telem-group" id="lapBtns"></div>
+    <span class="telem-label" style="margin-left:12px">Channels</span>
+    <div class="telem-group" id="chBtns">
+      <button class="ch-btn speed active" data-ch="Speed">Speed</button>
+      <button class="ch-btn brake active" data-ch="Brake">Brake</button>
+      <button class="ch-btn throttle active" data-ch="Throttle">Throttle</button>
+      <button class="ch-btn steering" data-ch="SteeringWheelAngle">Steering</button>
+    </div>
+  </div>
+  <div class="chart-wrap" style="padding-bottom:24px">
+    <div class="telem-canvas-wrap">
+      <canvas id="telemChart"></canvas>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- DIAGNOSTIC -->
+<section id="diagnostic">
+<div class="container">
+  <div class="section-header">
+    <div class="section-title"><span class="num">4</span> Telemetry Diagnostic</div>
+    <div class="section-desc">Weaknesses ranked by estimated lap-time cost. Physics-based costs use first-order kinematics; all others are heuristics.</div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px" class="diag-charts">
+    <div class="chart-wrap">
+      <div class="chart-title">Estimated Cost per Weakness (s/lap)</div>
+      <canvas id="weaknessChart"></canvas>
+    </div>
+    <div class="chart-wrap">
+      <div class="chart-title">Brake Pressure CV per Corner (lower = more consistent)</div>
+      <canvas id="brakeCV"></canvas>
+    </div>
+  </div>
+
+  <div class="chart-wrap">
+    <table class="diag-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Weakness</th>
+          <th>Metric</th>
+          <th>Est. Cost</th>
+          <th>Root Cause</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% set max_cost = d.weaknesses[0].lap_time_cost_s if d.weaknesses else 1 %}
+        {% for w in d.weaknesses %}
+        {% set tag_cls = 'tag-' + w.root_cause.split('-')[0] %}
+        <tr>
+          <td style="color:var(--text-3);font-family:var(--mono)">{{ loop.index }}</td>
+          <td>
+            <div style="font-weight:600;margin-bottom:3px">{{ w.name }}</div>
+            <div class="math-code">{{ w.cost_math[:80] }}{% if w.cost_math|length > 80 %}…{% endif %}</div>
+          </td>
+          <td>
+            <span style="font-family:var(--mono);font-size:13px;font-weight:600">
+              {% if w.metric_value is number %}{{ "%.4f" | format(w.metric_value) }}{% else %}{{ w.metric_value }}{% endif %}
+            </span>
+            <span style="color:var(--text-3);font-size:11px"> {{ w.metric_unit }}</span>
+          </td>
+          <td>
+            <div class="cost-bar-wrap">
+              <div class="cost-bar-bg">
+                <div class="cost-bar" style="width:{{ (w.lap_time_cost_s / max_cost * 100) | int }}%; background:{% if w.root_cause.startswith('technique') %}var(--orange){% elif w.root_cause.startswith('settings') %}var(--blue){% else %}var(--red){% endif %}"></div>
+              </div>
+              <span class="cost-num" style="color:var(--red)">{{ "%.3f" | format(w.lap_time_cost_s) }}s</span>
+            </div>
+          </td>
+          <td><span class="tag {{ tag_cls }}">{{ w.root_cause }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if d.corners %}
+  <div style="margin-top:20px">
+    <div class="section-title" style="margin-bottom:14px;font-size:15px">Corner Breakdown</div>
+    <div class="corner-grid">
+      {% for c in d.corners %}
+      {% set cv_pct = (c.brake_cv * 100) | int %}
+      {% set cv_color = 'var(--green)' if c.brake_cv < 0.1 else ('var(--orange)' if c.brake_cv < 0.2 else 'var(--red)') %}
+      <div class="corner-card">
+        <div class="corner-id">Turn {{ c.corner_id }}</div>
+        <div class="corner-metric">
+          <span class="corner-metric-label">Brake CV</span>
+          <span class="corner-metric-val" style="color:{{ cv_color }}">{{ "%.3f" | format(c.brake_cv) }}</span>
+        </div>
+        {% if c.mean_speed_deficit_mps %}
+        <div class="corner-metric">
+          <span class="corner-metric-label">Speed deficit</span>
+          <span class="corner-metric-val" style="color:{% if c.mean_speed_deficit_mps < -1 %}var(--red){% elif c.mean_speed_deficit_mps < 0 %}var(--orange){% else %}var(--green){% endif %}">
+            {{ "%+.1f" | format(c.mean_speed_deficit_mps * 3.6) }} km/h
+          </span>
+        </div>
+        {% endif %}
+        <div class="cv-bar" style="width:{{ [cv_pct * 2, 100] | min }}%; background:{{ cv_color }}; opacity:.6"></div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+</section>
+
+<!-- DECISION FLOW -->
+<section id="flow">
+<div class="container">
+  <div class="section-header">
+    <div class="section-title"><span class="num">5</span> Decision Flow</div>
+    <div class="section-desc">Signal → diagnosed weakness → root cause classification → recommended action.</div>
+  </div>
+  <div class="mermaid-wrap">
+    <div class="mermaid" id="mermaidDiagram">{{ d.mermaid | replace("```mermaid", "") | replace("```", "") | trim }}</div>
+  </div>
+</div>
+</section>
+
+<!-- SETTINGS -->
+<section id="settings">
+<div class="container">
+  <div class="section-header">
+    <div class="section-title"><span class="num">6</span> In-Game Configuration</div>
+    <div class="section-desc">Settings tuned to diagnosed weaknesses and your hardware. Apply in the listed order; run 5 consistent laps before judging feel.</div>
+  </div>
+
+  <!-- hardware verdict -->
+  <div class="hw-verdict" style="margin-bottom:20px">
+    <div class="hw-icon">✅</div>
+    <div>
+      <div class="hw-title">Hardware verdict: not the bottleneck</div>
+      <div class="hw-body">{{ meta.wheel }} ({{ meta.wheel_torque_nm | int }} Nm DD) + {{ meta.pedals }} ({{ meta.pedals_type }}) is class-leading hardware. Every weakness in this session is technique- or settings-limited. Counter-argument: a higher-torque wheel could deliver more detail at the limit, but telemetry shows no evidence of hardware masking driver intent.</div>
+    </div>
+  </div>
+
+  <div class="settings-grid">
+    {% for s in d.settings %}
+    <div class="setting-card">
+      <div class="setting-name">{{ s.name }}</div>
+      <span class="setting-path">{{ s.ui_path }}</span>
+      <div class="setting-value">→ {{ s.value[:80] }}{% if s.value|length > 80 %}…{% endif %}</div>
+      <div class="setting-rationale">{{ s.rationale[:180] }}{% if s.rationale|length > 180 %}…{% endif %}</div>
+      <div class="setting-source">Source: {{ s.source }}</div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+</section>
+
+<!-- PRACTICE PLAN -->
+<section id="practice">
+<div class="container">
+  <div class="section-header">
+    <div class="section-title"><span class="num">7</span> Practice Plan</div>
+    <div class="section-desc">Top 3 drills by ROI. Focus on one drill per session — do not mix drills or chase lap time while drilling.</div>
+  </div>
+  <div class="drills-grid">
+    {% for drill in d.drills %}
+    <div class="drill-card">
+      <div class="drill-num d{{ drill.priority }}">
+        <span>Drill {{ drill.priority }}</span>
+        <span style="opacity:.5">·</span>
+        <span>{{ drill.session_format.split(',')[0] }}</span>
+      </div>
+      <div class="drill-body">
+        <div class="drill-title">{{ drill.title }}</div>
+        <div class="drill-desc">{{ drill.description }}</div>
+        <div class="drill-criterion">
+          <strong style="color:var(--green);font-size:11px;text-transform:uppercase;letter-spacing:.06em">Success criterion</strong><br>
+          {{ drill.success_criterion }}
+        </div>
+        <div class="drill-format">Monitor: <code style="font-size:11px;color:var(--blue)">{{ drill.channel_to_monitor }}</code></div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- missing channels note -->
+  {% if d.missing_channels %}
+  <div style="margin-top:20px;padding:14px 18px;background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.2);border-radius:10px;font-size:12px;color:var(--text-2)">
+    <strong style="color:var(--purple)">Missing channels:</strong>
+    {{ d.missing_channels | join(', ') }}.
+    Metrics that depend on these channels are marked <em>[CHANNEL UNAVAILABLE — inferred]</em> in the full report.
+  </div>
+  {% endif %}
+</div>
+</section>
+
+<footer>
+  <div class="container">
+    iRacing Telemetry Analyzer · {{ meta.car }} at {{ meta.track }} · {{ meta.total_valid_laps }} laps analyzed
+    &nbsp;·&nbsp; Heuristic costs are estimates — use for priority ordering only.
+  </div>
+</footer>
+
+<!-- ═══════ JAVASCRIPT ═══════ -->
+<script>
+const DATA = {{ data | tojson | safe }};
+
+// ── CHART DEFAULTS ──────────────────────────────────────────────────────────
+Chart.defaults.color = '#8a93aa';
+Chart.defaults.borderColor = '#23262f';
+Chart.defaults.font.family = "'Inter', system-ui, sans-serif";
+
+const CHART_BG = '#12141a';
+
+// ── LAP TIMES ───────────────────────────────────────────────────────────────
+(function() {
+  const laps = DATA.laps;
+  const labels = laps.map(l => 'L' + l.lap_number);
+  const times = laps.map(l => l.lap_time_s);
+  const ref = DATA.meta.ref_lap_number;
+  const colors = laps.map(l => l.is_reference ? '#ffd166' : '#4895ef88');
+  const borders = laps.map(l => l.is_reference ? '#ffd166' : '#4895ef');
+
+  new Chart(document.getElementById('lapTimesChart'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data: times,
+        backgroundColor: colors,
+        borderColor: borders,
+        borderWidth: 1,
+        borderRadius: 4,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => {
+              const t = ctx.raw;
+              const m = Math.floor(t / 60);
+              const s = (t - m * 60).toFixed(3);
+              return ' ' + m + ':' + s.padStart(6, '0') + (ctx.dataIndex === (ref - 1) ? ' ★ Best' : '');
+            }
+          }
+        }
+      },
+      scales: {
+        x: { grid: { color: '#23262f' } },
+        y: {
+          grid: { color: '#23262f' },
+          ticks: {
+            callback: v => {
+              const m = Math.floor(v / 60);
+              const s = (v - m * 60).toFixed(1);
+              return m + ':' + s.padStart(4, '0');
+            }
+          }
+        }
+      }
+    }
+  });
+})();
+
+// ── WEAKNESS CHART ──────────────────────────────────────────────────────────
+(function() {
+  const ws = DATA.weaknesses;
+  const colors = ws.map(w => {
+    if (w.root_cause.startsWith('technique')) return '#f4a261';
+    if (w.root_cause.startsWith('settings')) return '#4895ef';
+    if (w.root_cause.startsWith('hardware')) return '#e63946';
+    return '#a855f7';
+  });
+  new Chart(document.getElementById('weaknessChart'), {
+    type: 'bar',
+    data: {
+      labels: ws.map(w => w.name.length > 28 ? w.name.slice(0, 28) + '…' : w.name),
+      datasets: [{
+        data: ws.map(w => w.lap_time_cost_s),
+        backgroundColor: colors.map(c => c + 'aa'),
+        borderColor: colors,
+        borderWidth: 1,
+        borderRadius: 4,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ' ~' + ctx.raw.toFixed(3) + 's/lap' } }
+      },
+      scales: {
+        x: { grid: { color: '#23262f' }, ticks: { callback: v => v.toFixed(2) + 's' } },
+        y: { grid: { display: false } }
+      }
+    }
+  });
+})();
+
+// ── BRAKE CV CHART ──────────────────────────────────────────────────────────
+(function() {
+  const corners = DATA.corners;
+  if (!corners.length) return;
+  const cvs = corners.map(c => c.brake_cv);
+  const colors = cvs.map(v => v > 0.2 ? '#e63946' : v > 0.1 ? '#f4a261' : '#2dc653');
+  new Chart(document.getElementById('brakeCV'), {
+    type: 'bar',
+    data: {
+      labels: corners.map(c => 'T' + c.corner_id),
+      datasets: [{
+        label: 'CV',
+        data: cvs,
+        backgroundColor: colors.map(c => c + 'aa'),
+        borderColor: colors,
+        borderWidth: 1,
+        borderRadius: 4,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ' CV=' + ctx.raw.toFixed(3) + (ctx.raw > 0.1 ? ' ⚠' : ' ✓') } }
+      },
+      scales: {
+        x: { grid: { color: '#23262f' } },
+        y: {
+          grid: { color: '#23262f' },
+          max: Math.min(1.0, Math.max(...cvs) * 1.3),
+          ticks: { callback: v => v.toFixed(2) }
+        }
+      }
+    }
+  });
+})();
+
+// ── TELEMETRY TRACES ────────────────────────────────────────────────────────
+(function() {
+  const TELEMETRY = DATA.telemetry;
+  const refLap = String(DATA.meta.ref_lap_number);
+  const lapNumbers = Object.keys(TELEMETRY).sort((a, b) => +a - +b);
+
+  const CH_CONFIG = {
+    Speed:              { label: 'Speed (km/h)', color: '#4895ef', scale: v => v * 3.6, yAxis: 'y' },
+    Brake:              { label: 'Brake (%)',    color: '#e63946', scale: v => v * 100, yAxis: 'y2' },
+    Throttle:           { label: 'Throttle (%)', color: '#2dc653', scale: v => v * 100, yAxis: 'y2' },
+    SteeringWheelAngle: { label: 'Steering (rad)', color: '#a855f7', scale: v => v, yAxis: 'y3' },
+  };
+
+  let activeChannels = new Set(['Speed', 'Brake', 'Throttle']);
+  let activeLaps = new Set([refLap]);
+
+  // Build lap buttons
+  const lapBtns = document.getElementById('lapBtns');
+  lapNumbers.forEach(ln => {
+    const btn = document.createElement('button');
+    btn.className = 'lap-btn' + (ln === refLap ? ' ref' : '') + (activeLaps.has(ln) ? ' active' : '');
+    btn.textContent = (ln === refLap ? '★ ' : '') + 'L' + ln;
+    btn.dataset.lap = ln;
+    btn.addEventListener('click', () => {
+      if (activeLaps.has(ln)) { activeLaps.delete(ln); btn.classList.remove('active'); }
+      else { activeLaps.add(ln); btn.classList.add('active'); }
+      refreshTelem();
+    });
+    lapBtns.appendChild(btn);
+  });
+
+  // Channel buttons
+  document.querySelectorAll('.ch-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const ch = btn.dataset.ch;
+      if (activeChannels.has(ch)) { activeChannels.delete(ch); btn.classList.remove('active'); }
+      else { activeChannels.add(ch); btn.classList.add('active'); }
+      refreshTelem();
+    });
+  });
+
+  const ctx = document.getElementById('telemChart').getContext('2d');
+  let telemChart = null;
+
+  function buildDatasets() {
+    const ds = [];
+    const lapArr = [...activeLaps].sort((a, b) => +a - +b);
+    lapArr.forEach(ln => {
+      const lapData = TELEMETRY[ln];
+      if (!lapData) return;
+      const distArr = lapData.LapDist || Array.from({length: (lapData.Speed || []).length}, (_, i) => i);
+      const isRef = ln === refLap;
+      activeChannels.forEach(ch => {
+        const raw = lapData[ch];
+        if (!raw) return;
+        const cfg = CH_CONFIG[ch];
+        const scaled = raw.map(v => v !== null ? cfg.scale(v) : null);
+        ds.push({
+          label: (isRef ? '★ L' : 'L') + ln + ' ' + cfg.label,
+          data: distArr.map((x, i) => ({ x, y: scaled[i] })),
+          borderColor: isRef ? cfg.color : cfg.color + '66',
+          borderWidth: isRef ? 2 : 1.2,
+          pointRadius: 0,
+          tension: 0.1,
+          yAxisID: cfg.yAxis,
+          spanGaps: true,
+        });
+      });
+    });
+    return ds;
+  }
+
+  function refreshTelem() {
+    const ds = buildDatasets();
+    if (!telemChart) {
+      telemChart = new Chart(ctx, {
+        type: 'line',
+        data: { datasets: ds },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: false,
+          parsing: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: { boxWidth: 12, padding: 12, font: { size: 11 } }
+            },
+            tooltip: {
+              callbacks: {
+                label: ctx => ' ' + ctx.dataset.label + ': ' + (ctx.parsed.y !== null ? ctx.parsed.y.toFixed(1) : 'n/a')
+              }
+            }
+          },
+          scales: {
+            x: {
+              type: 'linear',
+              title: { display: true, text: 'Track Distance (m)', font: { size: 11 } },
+              grid: { color: '#23262f' }
+            },
+            y: {
+              type: 'linear', position: 'left',
+              title: { display: true, text: 'Speed (km/h)', font: { size: 11 } },
+              grid: { color: '#23262f' }
+            },
+            y2: {
+              type: 'linear', position: 'right',
+              title: { display: true, text: 'Pedal (%)', font: { size: 11 } },
+              min: 0, max: 100,
+              grid: { display: false }
+            },
+            y3: {
+              type: 'linear', position: 'right',
+              title: { display: true, text: 'Steering (rad)', font: { size: 11 } },
+              grid: { display: false },
+              display: activeChannels.has('SteeringWheelAngle')
+            }
+          }
+        }
+      });
+    } else {
+      telemChart.data.datasets = ds;
+      telemChart.options.scales.y3.display = activeChannels.has('SteeringWheelAngle');
+      telemChart.update('none');
+    }
+  }
+
+  refreshTelem();
+})();
+
+// ── MERMAID ─────────────────────────────────────────────────────────────────
+mermaid.initialize({
+  startOnLoad: true,
+  theme: 'dark',
+  themeVariables: {
+    background: '#12141a',
+    primaryColor: '#1a1d28',
+    primaryTextColor: '#dde1ed',
+    primaryBorderColor: '#2e3244',
+    lineColor: '#4a5268',
+    secondaryColor: '#1e2130',
+    tertiaryColor: '#12141a',
+    edgeLabelBackground: '#12141a',
+  },
+  flowchart: { curve: 'basis', padding: 16 },
+});
+
+// ── RESPONSIVE: collapse chart grid on mobile ──────────────────────────────
+if (window.innerWidth < 700) {
+  document.querySelector('.diag-charts').style.gridTemplateColumns = '1fr';
+}
+</script>
+</body>
+</html>
